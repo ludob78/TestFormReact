@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import "./App.css";
 // import M from "./js/materialize.min";
 import M from "materialize-css";
-// import Column from "./column";
+import Column from "./column";
 // import '@atlaskit/css-reset';
 /* const initialState = {ListArticles:[]};
 const reducer = (state = initialState, action) => {
@@ -482,9 +482,9 @@ export class ListArticles extends Component {
   };
 
   render() {
-    const ListArticles = this.state.ListArticles.map((article, index) => (
+    // const ListArticles = this.state.ListArticles.map((article, index) => (
 
-/*     const ListArticles = this.state.columnOrder.map(columnId => {
+    const ListArticles = this.state.columnOrder.map(columnId => {
       const column = this.state.columns[columnId];
       const articles = column.articleIds.map(articleId =>
       this.state.ListArticles.filter(article => {
@@ -494,10 +494,10 @@ export class ListArticles extends Component {
       );
       console.log("articles in app:",articles)
       return <Column key={column.id} column={column} articles={articles} />;
-    }); */
+    });
 
     // this.state.ListArticles.map((article, index) => (
-      <div
+     /*  <div
         className={[
           "row lighten-4 z-depth-4",
           article.isPublic === true ? "green" : "grey"
@@ -572,7 +572,7 @@ export class ListArticles extends Component {
       </div>
     )).sort((a, b) => {
       return b.key - a.key;
-    });
+    }); */
     return <div>{ListArticles}</div>;
   }
 }

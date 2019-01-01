@@ -5,9 +5,10 @@
   "dependencies": {
     "materialize-css": "^1.0.0",
     "react": "^16.7.0",
+    "react-beautiful-dnd": "^10.0.3",
     "react-dom": "^16.7.0",
     "react-redux": "^6.0.0",
-    "react-scripts": "2.1.1",
+    "react-scripts": "^2.1.2",
     "redux": "^4.0.1",
     "styled-components": "^4.1.3"
   },

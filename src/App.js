@@ -5,6 +5,7 @@ import "./App.css";
 // import M from "./js/materialize.min";
 import M from "materialize-css";
 import Column from "./column";
+import { DragDropContext } from "react-beautiful-dnd";
 // import '@atlaskit/css-reset';
 /* const initialState = {ListArticles:[]};
 const reducer = (state = initialState, action) => {
@@ -429,6 +430,7 @@ export class ListArticles extends Component {
     this._removeArticle = this._removeArticle.bind(this);
     this.moveUp = this.moveUp.bind(this);
     this.moveDown = this.moveDown.bind(this);
+    this.onDragEnd = this.onDragEnd.bind(this);
   }
   /*  shouldComponentUpdate(nextProps) {
     console.log(
@@ -480,24 +482,53 @@ export class ListArticles extends Component {
       // this.refs.arrow_downward.classList.add("disabled")
     }
   };
-
+  onDragEnd = result => {
+    // todo: reorder column
+    console.log("result DnD:",result)
+    const {destination,source,draggableId}=result
+    if(!destination){
+      return;
+    }
+    // if drop my component in the same place as original
+    if(destination.droppableId===source.droppableId && destination.index===source.destination){
+      return;
+    }
+    // if change id of the column in state
+    const column=this.state.columns[source.droppableId];
+    const newArticleIds=Array.from(column.articleIds);
+    // remove article id from its position
+    newArticleIds.splice(source.index,1);
+    // drop article id on its new position
+    newArticleIds.splice(destination.index,0,draggableId);
+const newColumn={
+  ...column,
+  articleIds:newArticleIds,
+}
+const newState={
+  ...this.state,
+  columns:{
+    ...this.state.columns,
+    [newColumn.id]:newColumn,
+  }
+}
+this.setState(newState);
+  };
   render() {
     // const ListArticles = this.state.ListArticles.map((article, index) => (
 
     const ListArticles = this.state.columnOrder.map(columnId => {
       const column = this.state.columns[columnId];
       const articles = column.articleIds.map(articleId =>
-      this.state.ListArticles.filter(article => {
-          return article.id === articleId
-         
+        this.state.ListArticles.filter(article => {
+          return article.id === articleId;
         })
       );
-      console.log("articles in app:",articles)
+      console.log("articles in app:", articles);
       return <Column key={column.id} column={column} articles={articles} />;
     });
 
     // this.state.ListArticles.map((article, index) => (
-     /*  <div
+    /*  <div
         className={[
           "row lighten-4 z-depth-4",
           article.isPublic === true ? "green" : "grey"
@@ -573,7 +604,11 @@ export class ListArticles extends Component {
     )).sort((a, b) => {
       return b.key - a.key;
     }); */
-    return <div>{ListArticles}</div>;
+    return (
+      <DragDropContext onDragEnd={this.onDragEnd}>
+        <div>{ListArticles}</div>
+      </DragDropContext>
+    );
   }
 }
 const mapStateToProps = state => {

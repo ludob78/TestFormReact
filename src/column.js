@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,PureComponent } from "react";
 import styled from "styled-components";
 import Article from "./article";
 import { Droppable } from "react-beautiful-dnd";
@@ -13,18 +13,19 @@ const ArticlesList = styled.div`
 `;
 export default class Column extends Component {
   render() {
-    console.log("article in column", this.props.articles);
+    console.log("article in column", this.props.articles.flat());
     return (
       <Container>
-        <Droppable droppableId={this.props.column.id}>
+        <Droppable droppableId={this.props.column.id.toString()}>
         {/* each child of droppable pattern is a function */} 
           {(provided) => (
             <ArticlesList
             ref={provided.innerRef}// return dom node of component
             {...provided.droppableProps}
             >
-              {this.props.articles.map((article, index) => (
+              {this.props.articles.flat().map((article, index) => (
                 <Article key={index} article={article} index={index} />
+                // <div>test</div>
               ))}
               {provided.placeholder //react element increasing available space in droppable. Need to be added as child of component
             }

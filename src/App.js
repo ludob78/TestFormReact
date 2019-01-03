@@ -36,11 +36,12 @@ const styles = {
   }
 };
 
-class AppArticles extends PureComponent {
+class AppArticles extends Component {
   constructor(props) {
     super(props);
     this.state = {
       input: {
+        id:(0).toString(),
         title: "",
         description: "",
         file: "",
@@ -76,11 +77,12 @@ class AppArticles extends PureComponent {
   };
   _resetForm = () => {
     let inputReset = {
+      id:(parseInt(this.state.input.id)+1).toString(),
       title: "",
       description: "",
-      isPublic: false
-      // file: "",
-      // imagePreviewURL: ""
+      isPublic: false,
+      file: "",
+      imagePreviewURL: ""
     };
     this.removePicture();
     this.setState({ input: inputReset });
@@ -389,7 +391,7 @@ export class ListArticles extends Component {
     super(props);
     this.state = {
       ListArticles: [
-        {
+        /* {
           id: 1,
           title: "Joli text1",
           isPublic: false,
@@ -416,13 +418,14 @@ export class ListArticles extends Component {
           isPublic: false,
           description:
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-        }
+        } */
       ],
       columns: {
         "column-1": {
           id: "column-1",
           titre: "List Articles",
-          articleIds: [1, 2, 3, 4]
+          articleIds: []
+          // articleIds: [1, 2, 3, 4]
         }
       },
       columnOrder: ["column-1"]
@@ -441,7 +444,29 @@ export class ListArticles extends Component {
     return nextProps.IncListArticles !== this.props.IncListArticles;
   } */
   componentWillReceiveProps(nextProps) {
-    this.setState({ ListArticles: nextProps.IncListArticles });
+    
+    var newIdsInc=nextProps.IncListArticles.map((article)=>{
+      return article.id;
+    })
+  
+    console.log("newIdsInc:",newIdsInc)
+    const newListInc={
+       ...this.state,
+      columns:{
+        ...this.state.columns,
+        "column-1":{
+          ...this.state.columns["column-1"],
+          articleIds:newIdsInc,
+       
+        }
+      },
+      ListArticles: nextProps.IncListArticles,
+    }
+ 
+    console.log("newListInc:",newListInc)
+
+    this.setState(newListInc);
+    // this.setState({ ListArticles: nextProps.IncListArticles});
   }
   _removeArticle = article => {
     // clone current state
@@ -484,34 +509,37 @@ export class ListArticles extends Component {
   };
   onDragEnd = result => {
     // todo: reorder column
-    console.log("result DnD:",result)
-    const {destination,source,draggableId}=result
-    if(!destination){
+    console.log("result DnD:", result);
+    const { destination, source, draggableId } = result;
+    if (!destination) {
       return;
     }
     // if drop my component in the same place as original
-    if(destination.droppableId===source.droppableId && destination.index===source.destination){
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.destination
+    ) {
       return;
     }
     // if change id of the column in state
-    const column=this.state.columns[source.droppableId];
-    const newArticleIds=Array.from(column.articleIds);
+    const column = this.state.columns[source.droppableId];
+    const newArticleIds = Array.from(column.articleIds);
     // remove article id from its position
-    newArticleIds.splice(source.index,1);
+    newArticleIds.splice(source.index, 1);
     // drop article id on its new position
-    newArticleIds.splice(destination.index,0,draggableId);
-const newColumn={
-  ...column,
-  articleIds:newArticleIds,
-}
-const newState={
-  ...this.state,
-  columns:{
-    ...this.state.columns,
-    [newColumn.id]:newColumn,
-  }
-}
-this.setState(newState);
+    newArticleIds.splice(destination.index, 0, draggableId);
+    const newColumn = {
+      ...column,
+      articleIds: newArticleIds
+    };
+    const newState = {
+      ...this.state,
+      columns: {
+        ...this.state.columns,
+        [newColumn.id]: newColumn
+      }
+    };
+    this.setState(newState);
   };
   render() {
     // const ListArticles = this.state.ListArticles.map((article, index) => (

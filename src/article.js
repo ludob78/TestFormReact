@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,PureComponent } from "react";
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
 
@@ -26,7 +26,7 @@ export class Article extends Component {
   constructor(props) {
     super(props);
 
-    console.log("this.props from article;", this.props);
+  
     /*  this._removeArticle = this._removeArticle.bind(this);
         this.moveUp = this.moveUp.bind(this);
         this.moveDown = this.moveDown.bind(this); */
@@ -71,21 +71,30 @@ export class Article extends Component {
         }
       }; */
   render() {
+      
+     /*  const reduceArticle=this.props.article.reduce((obj,item)=>{
+          obj[item.id]=item.title;
+          return obj;
+      }) */
+    //   console.log("result:",reduceArticle)
+    console.log("this.props from article;", this.props);
+    console.log("this.props.article from article;", this.props.article);
     return (
       <Draggable
-        draggableId={this.props.article[0].id}
-        index={this.props.index}
+      index={this.props.index}
+      draggableId={this.props.article.id}
       >
         {(provided) => (
           <Container 
-          {...provided.draggableProps}
           {...provided.dragHandleProps}
+          {...provided.draggableProps}
+          // define tag from where we can drag
           ref={provided.innerRef}// return dom node of component
-          key={this.props.article[0].id}>
+          key={this.props.article.id}>
             <div
               className={[
                 "row lighten-4 z-depth-4",
-                this.props.article[0].isPublic === true ? "green" : "grey"
+                this.props.article.isPublic === true ? "green" : "grey"
               ].join(" ")}
               //   key={index}
             >
@@ -95,7 +104,7 @@ export class Article extends Component {
                     alt=""
                     className="col s12"
                     width="250"
-                    src={this.props.article[0].imagePreviewURL}
+                    src={this.props.article.imagePreviewURL}
                   />
                 </div>
               </div>
@@ -103,13 +112,13 @@ export class Article extends Component {
                 <div className="row">
                   <div className="col s12">
                     <h6 className="col s4">
-                      {this.props.article[0].categories}
+                      {this.props.article.categories}
                     </h6>
                     <h5
                       className="col s4  center-align white z-depth-1"
                       style={{ padding: "10px" }}
                     >
-                      {this.props.article[0].title}
+                      {this.props.article.title}
                     </h5>
                   </div>
                 </div>
@@ -119,18 +128,19 @@ export class Article extends Component {
                       className="input-field col s12 center-align white z-depth-1"
                       style={{ padding: "20px" }}
                     >
-                      {this.props.article[0].description}
+                      {this.props.article.description}
                     </div>
                   </div>
                 </div>
               </div>
               <div className="col s1" style={styles.button}>
                 <button
+                
                   className="btn waves-effect waves-light blue"
                   ref={"arrow_upward"}
                   type="submit"
                   name="action"
-                  onClick={() => this.moveUp(this.props.article[0])}
+                //   onClick={() => this.moveUp(this.props.article[0])}
                 >
                   <i className="material-icons">arrow_upward</i>
                 </button>
@@ -140,18 +150,19 @@ export class Article extends Component {
                   className="btn waves-effect waves-light red"
                   type="submit"
                   name="action"
-                  onClick={() => this._removeArticle(this.props.article[0])}
+                //   onClick={() => this._removeArticle(this.props.article)}
                 >
                   <i className="material-icons">remove</i>
                 </button>
               </div>
               <div className="col s1" style={styles.button}>
                 <button
+                
                   className="btn waves-effect waves-light blue"
                   ref={"arrow_downward"}
                   type="submit"
                   name="action"
-                  onClick={() => this.moveDown(this.props.article[0])}
+                //   onClick={() => this.moveDown(this.props.article[0])}
                 >
                   <i className="material-icons">arrow_downward</i>
                 </button>

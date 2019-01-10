@@ -1,9 +1,11 @@
-import React, { Component,PureComponent } from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
-
+import { connect } from "react-redux";
+import Modal from "./App";
+import FormArticle from "./App.jsx";
 const Container = styled.div`
-  border: 1px solid lightgrey;
+  //border: 1px solid lightgrey;
   padding: 8px;
   border-radius: 2px;
   margin-bottom: 10px;
@@ -22,157 +24,185 @@ const styles = {
     marginTop: "30px"
   }
 };
-export class Article extends Component {
+const Handle = styled.div`
+  background-color: blue;
+`;
+class Article extends Component {
   constructor(props) {
     super(props);
 
-  
-    /*  this._removeArticle = this._removeArticle.bind(this);
-        this.moveUp = this.moveUp.bind(this);
-        this.moveDown = this.moveDown.bind(this); */
+    this.state = { article: {} };
+    this.handleEditing = this.handleEditing.bind(this);
   }
-  /*  _removeArticle = article => {
-        // clone current state
-        var cloneListArticles = this.state.ListArticles.slice();
-        var indexArticle = cloneListArticles.indexOf(article);
-        // delete index from clone
-        cloneListArticles.splice(indexArticle, 1);
-        this.setState({ ListArticles: cloneListArticles });
-        // update parent state to not reload its state here
-        this.props.onDeleteArticle(cloneListArticles);
-      };
-      moveUp = article => {
-        let cloneState = this.state.ListArticles.sort().slice();
-        let i = cloneState.indexOf(article);
-        if (i < cloneState.length - 1) {
-          //get articles to move
-          let removedArticles = cloneState.splice(i, 1);
-          // add elt to his new place
-          cloneState.splice(i + 1, 0, removedArticles[0]);
-          // update State
-          this.setState({ ListArticles: cloneState });
-        } else {
-          // this.refs.arrow_upward.classList.add("disabled")
-        }
-      };
-      moveDown = article => {
-        let cloneState = this.state.ListArticles.sort().slice();
-        //found index article
-        let i = cloneState.indexOf(article);
-        if (i > 0) {
-          //get articles to move
-          let removedArticles = cloneState.splice(i, 1);
-          // add elt to his new place
-          cloneState.splice(i - 1, 0, removedArticles[0]);
-          // update State
-          this.setState({ ListArticles: cloneState });
-        } else {
-          // this.refs.arrow_downward.classList.add("disabled")
-        }
-      }; */
+
+  componentWillReceiveProps(nextProps) {
+    console.log("componentWillReceiveProps article:", nextProps);
+  }
+  shouldComponentUpdate(nextProps) {
+    // console.log("shouldComponentUpdate ListArticles nextState:", nextState);
+    // console.log("shouldComponentUpdate ListArticles this.state:", this.state);
+    console.log("shouldComponentUpdate Article nextProps:", nextProps);
+    console.log("shouldComponentUpdate Article this.props:", this.props);
+    return true;
+  }
+  handleEditing = () => {
+    // e.preventDefault()
+    console.log("before this.props.article in editing:", this.props.article);
+
+    // this.props.article.isEditing=!this.props.article.isEditing
+    // console.log("after this.props.article in editing:",this.props.article)
+    this.props.onEditArticle(this.props.article);
+  };
   render() {
-      
-     /*  const reduceArticle=this.props.article.reduce((obj,item)=>{
+    /*  const reduceArticle=this.props.article.reduce((obj,item)=>{
           obj[item.id]=item.title;
           return obj;
       }) */
     //   console.log("result:",reduceArticle)
-    console.log("this.props from article;", this.props);
-    console.log("this.props.article from article;", this.props.article);
+    // console.log("this.props from article;", this.props);
+    // console.log("this.props.article from article;", this.props.article);
     return (
-      <Draggable
-      index={this.props.index}
-      draggableId={this.props.article.id}
-      >
-        {(provided) => (
-          <Container 
-          {...provided.dragHandleProps}
-          {...provided.draggableProps}
-          // define tag from where we can drag
-          ref={provided.innerRef}// return dom node of component
-          key={this.props.article.id}>
-            <div
-              className={[
-                "row lighten-4 z-depth-4",
-                this.props.article.isPublic === true ? "green" : "grey"
-              ].join(" ")}
-              //   key={index}
-            >
-              <div className="col s2">
-                <div className="row">
-                  <img
-                    alt=""
-                    className="col s12"
-                    width="250"
-                    src={this.props.article.imagePreviewURL}
-                  />
-                </div>
+      <Draggable index={this.props.index} draggableId={this.props.article.id}>
+        {provided => (
+          <Container
+            {...provided.draggableProps}
+            ref={provided.innerRef} // return dom node of component
+            key={this.props.article.id}
+          >
+            {/* this.props.article.isEditing === true ? (
+              //   <FormArticle />
+              <div>
+                   <a
+                  href="#modalForm"
+                  className="btn waves-effect waves-light orange btn modal-trigger"
+                  type="submit"
+                  name="action"
+                  onClick={ this.handleEditing}
+                //   onClick={() => this.props.onEditArticle(this.props.article)}
+                >
+                  <i className="material-icons">edit</i>
+                </a>
               </div>
-              <div className="col s9">
-                <div className="row">
-                  <div className="col s12">
-                    <h6 className="col s4">
-                      {this.props.article.categories}
-                    </h6>
-                    <h5
-                      className="col s4  center-align white z-depth-1"
-                      style={{ padding: "10px" }}
-                    >
-                      {this.props.article.title}
-                    </h5>
+            ) : ( */
+              <div
+                className={[
+                  "row lighten-4 z-depth-4",
+                  this.props.article.isPublic === true ? "green" : "grey"
+                ].join(" ")}
+                //   key={index}
+              >
+                <div className="col s2">
+                  <div className="row">
+                    <img
+                      alt=""
+                      className="col s12"
+                      width="250"
+                      src={this.props.article.imagePreviewURL}
+                    />
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col s12">
-                    <div
-                      className="input-field col s12 center-align white z-depth-1"
-                      style={{ padding: "20px" }}
-                    >
-                      {this.props.article.description}
+                <div className="col s9">
+                  <div className="row">
+                    <div className="col s12">
+                      <h6 className="col s4">
+                        {this.props.article.categories}
+                      </h6>
+                      <h5
+                        className="col s4  center-align white z-depth-1"
+                        style={{ padding: "10px" }}
+                      >
+                        {this.props.article.title}
+                      </h5>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col s12">
+                      <div
+                        className="input-field col s12 center-align white z-depth-1"
+                        style={{ padding: "20px" }}
+                      >
+                        {this.props.article.description}
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="col s1" style={styles.button}>
+                  <Handle
+                    {...provided.dragHandleProps} // define tag from where we can drag
+                    className="btn waves-effect waves-light blue"
+                    ref={"arrow_upward"}
+                    name="action"
+                  >
+                    <i className="material-icons">swap_vert</i>
+                  </Handle>
+                </div>
+                <div className="col s1" style={styles.button}>
+                  <button
+                    className="btn waves-effect waves-light red"
+                    type="submit"
+                    name="action"
+                    //   onClick={() => this._removeArticle(this.props.article)}
+                    onClick={() =>
+                      this.props.onDeleteArticle(this.props.article)
+                    }
+                  >
+                    <i className="material-icons">remove</i>
+                  </button>
+                </div>
+                <div className="col s1" style={styles.button}>
+                  <a
+                  href="#modalForm"
+                    className="btn waves-effect waves-light orange btn modal-trigger"
+                    type="submit"
+                    name="action"
+                    onClick={this.handleEditing}
+                    // onClick={() => this.props.onEditArticle(this.props.article)}
+                  >
+                    <i className="material-icons">edit</i>
+                  </a>
+                </div>
               </div>
-              <div className="col s1" style={styles.button}>
-                <button
-                
-                  className="btn waves-effect waves-light blue"
-                  ref={"arrow_upward"}
-                  type="submit"
-                  name="action"
-                //   onClick={() => this.moveUp(this.props.article[0])}
-                >
-                  <i className="material-icons">arrow_upward</i>
-                </button>
-              </div>
-              <div className="col s1" style={styles.button}>
-                <button
-                  className="btn waves-effect waves-light red"
-                  type="submit"
-                  name="action"
-                //   onClick={() => this._removeArticle(this.props.article)}
-                >
-                  <i className="material-icons">remove</i>
-                </button>
-              </div>
-              <div className="col s1" style={styles.button}>
-                <button
-                
-                  className="btn waves-effect waves-light blue"
-                  ref={"arrow_downward"}
-                  type="submit"
-                  name="action"
-                //   onClick={() => this.moveDown(this.props.article[0])}
-                >
-                  <i className="material-icons">arrow_downward</i>
-                </button>
-              </div>
-            </div>
+            // )
+        }
           </Container>
         )}
       </Draggable>
     );
   }
 }
-
-export default Article;
+const deleteArticle = article => {
+  return {
+    type: "removeArticle",
+    id: article.id
+  };
+};
+const editArticle = article => {
+  return {
+    type: "editArticle",
+    id: article.id,
+    categories: article.categories,
+    file: article.file,
+    imagePreviewURL: article.imagePreviewURL,
+    title: article.title,
+    isPublic: article.isPublic,
+    isEditing: article.isEditing,
+    description: article.description
+  };
+};
+// action on store
+const mapsDispatchToProps = dispatch => {
+  return {
+    onDeleteArticle: article => {
+      dispatch(deleteArticle(article));
+    },
+    onEditArticle: article => {
+      dispatch(editArticle(article));
+    }
+  };
+};
+// export default AppArticles;
+export default connect(
+  null,
+  mapsDispatchToProps
+)(Article);
+// export default Article;

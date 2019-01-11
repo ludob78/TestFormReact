@@ -65,8 +65,9 @@ export class FormArticle extends Component {
     // console.log("m:",M)
     // M.AutoInit()
     var elems = document.querySelectorAll("select");
-     M.FormSelect.init(elems);
+    M.FormSelect.init(elems);
     // console.log("instances:", instances);
+    
   }
   /*   shouldComponentUpdate(nextProps, nextState) {
     console.log("shouldComponentUpdate FormArticle nextProps:", nextProps);
@@ -77,9 +78,8 @@ export class FormArticle extends Component {
     return nextState.input !== this.state.input;
     //  return true;
   } */
-
   _addArticle = () => {
-    /*    this.setState({
+  /*   this.setState({
       ListArticles: this.state.ListArticles.concat(this.state.input)
     }); */
     this.props.articles.onAddArticle(this.state.input);
@@ -426,7 +426,7 @@ const styles = theme => ({
   }
 });
 
-const duration=3000;
+const duration=30000;
 const defaultFadeStyle = {
   transition: `opacity ${duration}ms ease-in-out`,
   opacity: 0,

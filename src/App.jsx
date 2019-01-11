@@ -1,27 +1,21 @@
-import React, { Component, PureComponent } from "react";
+import React, { Component } from "react";
 // import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import "./App.css";
 // import M from "./js/materialize.min";
 import M from "materialize-css";
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Modal from "@material-ui/core/Modal";
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+// import Fade from '@material-ui/core/Fade';
+import Transition from "react-transition-group/Transition";
 import ListArticles from "./ListArticles.jsx";
-
 // import '@atlaskit/css-reset';
-/* const initialState = {ListArticles:[]};
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "addItem":
-      return {
-        ...state,
-        ListArticles: action.ListArticles
-      };
-    default:
-      return state;
-  }
- 
-}; */
+
 // const store = createStore(reducer);
-const styles = {
+/* const styles = {
   td: {
     backgroundColor: "white",
     border: "1px solid black",
@@ -34,11 +28,12 @@ const styles = {
   button: {
     marginTop: "30px"
   }
-};
+}; */
 
 export class FormArticle extends Component {
   constructor(props) {
     super(props);
+    console.log("this.props from FormArticle:", this.props);
     this.state = {
       input: {
         id:
@@ -70,11 +65,10 @@ export class FormArticle extends Component {
     // console.log("m:",M)
     // M.AutoInit()
     var elems = document.querySelectorAll("select");
-     var instances = M.FormSelect.init(elems);
+     M.FormSelect.init(elems);
     // console.log("instances:", instances);
-
   }
-/*   shouldComponentUpdate(nextProps, nextState) {
+  /*   shouldComponentUpdate(nextProps, nextState) {
     console.log("shouldComponentUpdate FormArticle nextProps:", nextProps);
     console.log("shouldComponentUpdate FormArticle this.props:", this.props);
     console.log("shouldComponentUpdate FormArticle nextState:", nextState);
@@ -83,7 +77,7 @@ export class FormArticle extends Component {
     return nextState.input !== this.state.input;
     //  return true;
   } */
- 
+
   _addArticle = () => {
     /*    this.setState({
       ListArticles: this.state.ListArticles.concat(this.state.input)
@@ -91,7 +85,7 @@ export class FormArticle extends Component {
     this.props.articles.onAddArticle(this.state.input);
   };
   componentDidUpdate(prevProps) {
-    console.log("FormArticle did update",)
+    console.log("FormArticle did update");
     // resetForm once props from redux update to get new id in input
     if (prevProps.articles.ListArticles !== this.props.articles.ListArticles) {
       this._resetForm();
@@ -181,7 +175,7 @@ export class FormArticle extends Component {
     this.setState({ input: deepStateInputCat });
   };
   render() {
-    console.log("this.props in formArticle:",this.props)
+    console.log("this.props in formArticle:", this.props);
     var { imagePreviewURL } = this.state.input;
     let imagePreview = null;
     // console.log("this.state.input.imagePreviewURL:",this.state.input.imagePreviewURL);
@@ -203,7 +197,7 @@ export class FormArticle extends Component {
         </div>
       );
     }
-  /*   const articleToEdit=this.props.articles.ListArticles.filter(article=>{
+    /*   const articleToEdit=this.props.articles.ListArticles.filter(article=>{
 return article.isEditing===true;
     }) */
     return (
@@ -409,33 +403,58 @@ return article.isEditing===true;
   }
 }
 
-export class Modal extends Component{
-    constructor(props){
-      super(props)
-      this.state={props}
-    }
-    render(){
-      return(<div id="modalForm" className="modal">
-      <div className="modal-content">
-        <h4 className="center-align">{this.props.headerModal}</h4>
-         <FormArticle articles={this.props.articles} ></FormArticle>
-      </div>
-      <div className="modal-footer">
-        <a href="#!" className="modal-close waves-effect waves-green btn-flat">Close</a>
-      </div>
-    </div>)
-    }
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+  },
+  textAlign: {
+    // padding: theme.spacing.unit * 2,
+    textAlign: 'center',
+    // color: theme.palette.text.secondary,
+  },
+  button:{
+    margin: theme.spacing.unit,
+  },
+  modal:{
+    header:{
+      color:"white"
+    },
+    background:{
+    },
+    backgroundColor:"#b6efff",
+    margin:"15%",
   }
+});
 
-
+const duration=3000;
+const defaultFadeStyle = {
+  transition: `opacity ${duration}ms ease-in-out`,
+  opacity: 0,
+}
+const transitionFadeStyles = {
+  entering: { opacity: 0 },
+  entered:  { opacity: 1 },
+};
 class AppArticles extends Component {
-
-  componentDidMount(){
+  constructor(props) {
+    super(props);
+    this.state = { isModalOpen: false };
+  }
+  componentDidMount() {
     var modals = document.querySelectorAll(".modal");
     // console.log("modals:", modals);
-   M.Modal.init(modals);
+    let optionsModals = {
+      startingTop: "70%",
+      dismissible: false,
+      preventScrolling: false,
+      inDuration: 250,
+      outDuration: 500,
+      onOpenStart: () => {
+        console.log("open modal");
+      }
+    };
+    M.Modal.init(modals, optionsModals);
     // console.log("instanceModal:", instanceModal);
-
   }
   /*   shouldComponentUpdate(nextProps,nextState) {
     console.log("shouldComponentUpdate AppArticles nextProps:", nextProps);
@@ -443,29 +462,56 @@ class AppArticles extends Component {
     // console.log("shouldComponentUpdate AppArticles nextState:", nextState);
     // console.log("shouldComponentUpdate AppArticles this.state:", this.state);
     return nextProps.ListArticles !== this.props.ListArticles;
-
     // return true;
   } */
   render() {
-    return (
-      <div className="App container">
-        <h1 className="center-align">Articles</h1>
-        {/* send props from parent connected to store */}
-        {/* <FormArticle articles={this.props} /> */}
-        <Modal articles={this.props} headerModal="Add article"></Modal>
-        <div className="center-align">
-         <a
-          className="waves-effect waves-light btn modal-trigger"
-          href="#modalForm"
-        >
-          <i className="large material-icons">add</i>
-        </a>
-        </div>
-        <ListArticles onDeleteArticle={this._handleDelete} />
-      </div>
-    );
+    const { classes } = this.props;
+    return <Grid className={classes.root}>
+        <Grid container spacing={24}>
+          {/* <Grid className="App container"> */}
+          <Grid className={classes.textAlign} item xs={12}>
+            <h1>Articles</h1>
+          </Grid>
+          <Transition in={this.state.isModalOpen} timeout={duration}>
+            {state => <div style={{ ...defaultFadeStyle, ...transitionFadeStyles[state] }}>
+                <Modal className={classes.modal} open={this.state.isModalOpen}>
+                  <Grid container direction="column" alignItems="center" justify="center" className={["", classes.textAlign].join(" ")}>
+                    {/* <Transition in={this.state.isModalOpen} timeout={500} /> */}
+                    <h1
+                      className={[classes.modal.header, "white"].join(" ")}
+                    >
+                      Add article
+                    </h1>
+                    {/* send props from parent connected to store */}
+                    <FormArticle articles={this.props} />
+                    <Grid item xs={6} style={{ backgroundColor: "black" }}>
+                      <Button variant="contained" size="small" fullWidth={false} className={classes.button} color="secondary" onClick={() => {
+                          this.setState({ isModalOpen: false });
+                        }}>
+                        Close
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Modal>
+              </div>}
+          </Transition>
+          <div className="center-align">
+            <button className="waves-effect waves-light btn" onClick={() => {
+                this.setState({ isModalOpen: true });
+              }}>
+              <i className="large material-icons">add</i>
+            </button>
+          </div>
+          <ListArticles onDeleteArticle={this._handleDelete} />
+        </Grid>
+      </Grid>;
   }
 }
+// Define mandatory props to component
+AppArticles.propTypes={
+  classes:PropTypes.object.isRequired,
+}
+
 const mapStateToProps = state => {
   return {
     ListArticles: state.articles.ListArticles,
@@ -499,4 +545,4 @@ const mapsDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapsDispatchToProps
-)(AppArticles);
+)(withStyles(styles)(AppArticles));

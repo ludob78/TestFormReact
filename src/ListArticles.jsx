@@ -78,7 +78,7 @@ class ListArticles extends Component {
   };
   render() {
     // const ListArticles = this.state.ListArticles.map((article, index) => (
-    console.log("this.props in ListArticles:", this.props);
+    // console.log("this.props in ListArticles:", this.props);
     /*     const ListArticles = this.state.columnOrder.map(columnId => {
       const column = this.state.columns[columnId];
       const articles = column.articleIds.map(articleId =>
@@ -98,7 +98,7 @@ class ListArticles extends Component {
       );
       // console.log("articles in app:", articles);
       return <Column key={column.id} column={column} articles={articles} />;
-    });
+    })
 
     // this.state.ListArticles.map((article, index) => (
     /*  <div

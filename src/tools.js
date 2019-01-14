@@ -1,4 +1,6 @@
- const isEqual = function (value, other) {
+//* compare type, value & array of 2 objects
+//! don't check value in deep subarray
+const isEqual = function (value, other) {
 
 	// Get the value type
 	var type = Object.prototype.toString.call(value);
@@ -59,5 +61,83 @@
 	return true;
 
 };
-
-export {isEqual}
+//! flat is experimental & define property flat on array is read only
+//* to reduce deep array ex: [["a"],["b"],[["c"]]]=>["a","b",["c"]]
+const myFlat = (ToFlat, depth = 1) => {
+	return ToFlat.reduce((acc, currentValue) => {
+		return acc.concat((Array.isArray(currentValue) && (depth - 1)) ? currentValue.flat(depth - 1) : currentValue);
+	}, [])
+}
+//* Get a random item from an array */
+const randomGetItem = (items) => {
+	return items[Math.floor(Math.random() * items.length)]
+}
+//* Get a random number in a specific range */
+const randomGetInRange = (min, max) => {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+//* Generate an array of numbers with numbers from 0 to max */ ex:numbers = [1,2,3 ... 100] 
+const generateArray = (maxLength) => {
+	var numbersArray = [],
+		max = maxLength;
+	for (var i = 1; numbersArray.push(i++) < max;);
+	return numbersArray
+}
+//* Shuffle an array of numbers */
+const shuffleArray = (arrayToShuffle) => {
+	return arrayToShuffle.sort(function () {
+		return Math.random() - 0.5
+	})
+}
+//*Merge multiple Array */
+const mergeArrays = (array1, array2) => {
+	return Array.prototype.push.apply(array1, array2);
+}
+//* empty array */
+const emptyArray = (array) => {
+	array.splice(0, array.length)
+}
+//* Remove elt of array */
+const removeFromArray=(elt,array)=>{
+	let indexToElt=array.indexOf(elt)
+	array.splice(indexToElt,1)
+}
+//*Move Down value in array */
+const moveDownInArray = (toMove, currentArray) => {
+	let newArray = currentArray.sort().slice();
+	let i = newArray.indexOf(toMove);
+	if (i < newArray.length - 1) {
+		//get elt to move
+		let removedValue = newArray.splice(i, 1);
+		// add elt to his new place
+		newArray.splice(i + 1, 0, removedValue[0]);
+		return newArray
+	}
+	return newArray
+}
+//*Move UP value in array */
+const moveUpInArray=(toMove, currentArray)=>{
+	let newArray = currentArray.sort().slice();
+	let i = newArray.indexOf(toMove);
+	if (i > 0) {
+		//get elt to move
+		let removedValue = newArray.splice(i, 1);
+		// add elt to his new place
+		newArray.splice(i - 1, 0, removedValue[0]);
+		return newArray
+	}
+	return newArray
+}
+export {
+	isEqual,
+	myFlat,
+	randomGetItem,
+	randomGetInRange,
+	generateArray,
+	shuffleArray,
+	mergeArrays,
+	emptyArray,
+	moveUpInArray,
+	moveDownInArray,
+	removeFromArray,
+}

@@ -8,8 +8,6 @@ import * as serviceWorker from "./serviceWorker";
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 const initialState = {
-  // ColumnOrder: [],
-  // ColumnOrder: [1, 2, 3, 4],
   columns: {
     "column-1": {
       id: "column-1",
@@ -68,7 +66,7 @@ const initialState = {
   ]
 };
 export const articleReducer = (state = initialState, action) => {
-  console.log("action in article reducer:", action);
+  console.log(action);
   switch (action.type) {
     case "addArticle":
       return {
@@ -110,7 +108,7 @@ export const articleReducer = (state = initialState, action) => {
         })
       };
     case "reOrder":
-      console.log("action in reorder reducer:", action);
+      // console.log("action in reorder reducer:", action);
       return action.column;
     case "editArticle":
       return {
@@ -131,15 +129,16 @@ const configureStore = createStore(
   rootReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
-
+console.log(configureStore.getState())
 ReactDOM.render(
   <Provider store={configureStore}>
     <App />
   </Provider>,
   document.getElementById("root")
-);
+);/*? */
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.unregister();
+export default configureStore

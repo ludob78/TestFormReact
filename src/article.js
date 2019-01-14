@@ -1,16 +1,15 @@
 import React, { Component } from "react";
-import styled from "styled-components";
+
 import { Draggable } from "react-beautiful-dnd";
 import { connect } from "react-redux";
 import Modal from "./App";
 import FormArticle from "./App.jsx";
-const Container = styled.div`
-  //border: 1px solid lightgrey;
-  padding: 8px;
-  border-radius: 2px;
-  margin-bottom: 10px;
-`;
+
 const styles = {
+  handle:{backgroundColor: "blue"},
+  container:{padding: "8px",
+    borderRadius: "2px",
+    marginBottom: "10px"},
   td: {
     backgroundColor: "white",
     border: "1px solid black",
@@ -24,9 +23,7 @@ const styles = {
     marginTop: "30px"
   }
 };
-const Handle = styled.div`
-  background-color: blue;
-`;
+
 class Article extends Component {
   constructor(props) {
     super(props);
@@ -64,7 +61,7 @@ class Article extends Component {
     return (
       <Draggable index={this.props.index} draggableId={this.props.article.id}>
         {provided => (
-          <Container
+          <div style={styles.container}
             {...provided.draggableProps}
             ref={provided.innerRef} // return dom node of component
             key={this.props.article.id}
@@ -72,7 +69,7 @@ class Article extends Component {
             {/* this.props.article.isEditing === true ? (
               //   <FormArticle />
               <div>
-                   <a
+                  <a
                   href="#modalForm"
                   className="btn waves-effect waves-light orange btn modal-trigger"
                   type="submit"
@@ -127,14 +124,15 @@ class Article extends Component {
                   </div>
                 </div>
                 <div className="col s1" style={styles.button}>
-                  <Handle
+                  <div
+                    style={styles.handle}
                     {...provided.dragHandleProps} // define tag from where we can drag
-                    className="btn waves-effect waves-light blue"
+                    className="btn waves-effect waves-light"
                     ref={"arrow_upward"}
                     name="action"
                   >
                     <i className="material-icons">swap_vert</i>
-                  </Handle>
+                  </div>
                 </div>
                 <div className="col s1" style={styles.button}>
                   <button
@@ -164,7 +162,7 @@ class Article extends Component {
               </div>
             // )
         }
-          </Container>
+          </div>
         )}
       </Draggable>
     );

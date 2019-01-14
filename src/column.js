@@ -1,16 +1,12 @@
 import React, { Component } from "react";
-import styled from "styled-components";
 import Article from "./article";
 import { Droppable } from "react-beautiful-dnd";
-const Container = styled.div`
-  margin: 8px;
-  //border: 1px solid lightgrey;
-  border-radius: 2px;
-`;
-// const Title = styled.h3``;
-const ArticlesList = styled.div`
-  padding: 8px;
-`;
+import {myFlat} from "./tools";
+const styles={
+  container:{margin:"8px",borderRadius: "2px"},
+  articleList:{padding:"8px"}
+}
+
 class InnerList extends Component {
   /* shouldComponentUpdate(nextProps) {
     if (nextProps.articles === this.props.articles) {
@@ -18,22 +14,32 @@ class InnerList extends Component {
     }
     return true;
   } */
+
+  /*flatD=(depth = 1)=>{
+    return this.reduce(function (flat, toFlatten) {
+    return flat.concat((Array.isArray(toFlatten) && (depth-1)) ? toFlatten.flat(depth-1) : toFlatten);
+  }, []); 
+
+}*/
   render() {
-      console.log("article from column:",this.props.articles.flat())
-    return this.props.articles.flat().map((article, index) => (
-      <Article key={index} article={article} index={index} />
-    ));
+    
+      console.log("this.props.articles flatting in column:",myFlat(this.props.articles))
+    // return this.props.articles.flat()
+    return myFlat(this.props.articles)
+    .map((article, index) => ( <Article key = {index}      article = {        article      }      index = {        index      }      />    ))
+
   }
 }
 class Column extends Component {
   render() {
+    
     // console.log("article in column", this.props.articles.flat());
     return (
-      <Container>
+      <div style={styles.container}>
         <Droppable droppableId={this.props.column.id.toString()} direction="vertical" type="column">
           {/* each child of droppable pattern is a function */}
           {provided => (
-            <ArticlesList
+            <div style={styles.articleList}
               ref={provided.innerRef} // return dom node of component
               {...provided.droppableProps}
             >
@@ -45,10 +51,10 @@ class Column extends Component {
               {
                 provided.placeholder //react element increasing available space in droppable. Need to be added as child of component
               }
-            </ArticlesList>
+            </div>
           )}
         </Droppable>
-      </Container>
+      </div>
     );
   }
 }

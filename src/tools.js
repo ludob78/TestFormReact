@@ -102,7 +102,7 @@ const removeFromArray=(elt,array)=>{
 	let indexToElt=array.indexOf(elt)
 	array.splice(indexToElt,1)
 }
-//*Move Down value in array */
+//*Move Down value in array */ ex move 3:[1,2,3,4,5,6] => [1,2,4,3,5,6]
 const moveDownInArray = (toMove, currentArray) => {
 	let newArray = currentArray.sort().slice();
 	let i = newArray.indexOf(toMove);
@@ -115,7 +115,7 @@ const moveDownInArray = (toMove, currentArray) => {
 	}
 	return newArray
 }
-//*Move UP value in array */
+//*Move UP value in array */ ex move 3:[1,2,3,4,5,6] => [1,3,2,4,5,6]
 const moveUpInArray=(toMove, currentArray)=>{
 	let newArray = currentArray.sort().slice();
 	let i = newArray.indexOf(toMove);

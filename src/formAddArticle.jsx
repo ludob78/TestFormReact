@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {connect} from "react-redux";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -44,6 +45,7 @@ const styles = theme => ({
     margin: "15%"
   }
 });
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -56,13 +58,99 @@ const MenuProps = {
 };
 const categories = ["Mobilier", "Nourriture", "Vêtement"];
 function getStyles(name, that) {
+  console.log("name:",name)/*?*/
+  console.log("that:",that)/*?*/
+
   return {
     fontWeight:
-      that.state.name.indexOf(name) === -1
-        ? that.props.theme.typography.fontWeightRegular
-        : that.props.theme.typography.fontWeightMedium
+      categories.indexOf(name) === -1
+        ? that.props.propsFromParent.theme.typography.fontWeightRegular
+        : that.props.propsFromParent.theme.typography.fontWeightMedium
   };
 }
+
+class MultipleSelect extends Component {
+  constructor(props){
+    super(props)
+    this.state={categories:[]}
+    this.handleMultiSelectCat = this.handleMultiSelectCat.bind(this);
+
+  }
+  componentWillReceiveProps(nextProps){
+    console.log("MultipleSelect componentWillReceiveProps");
+    console.log("MultipleSelect nextProps",nextProps);
+    
+  }
+  shouldComponentUpdate(nextProps){
+   console.log('shouldComponentUpdate nextProps:',nextProps);
+   
+    
+    
+    
+    return true
+  }
+    //! HTMLOptionsCollection is not an array and don't have any foreach method
+    handleMultiSelectCat = e => {
+      // console.log("handleMultiSelectCat handleMultiSelectCat:",e.target.value)
+      let selectedValue = [];
+      let options = e.target.value;
+      Array.prototype.forEach.call(options, option => {
+        // console.log("handleMultiSelectCat option:",option)
+        if (option) {
+          selectedValue.push(option);
+        }
+      });
+      // console.log("handleMultiSelectCat selectedValue:",selectedValue)
+      /* let deepStateInputCat = { ...this.state.input };
+      deepStateInputCat.categories = selectedValue;
+      this.setState({ input: deepStateInputCat }); */
+      this.setState({ categories: selectedValue });
+      this.props.selectedValue(selectedValue);
+  
+    }; 
+  render() {
+    const { classes } = this.props.propsFromParent;
+    // console.log("this:",this)
+            
+    return (
+      
+        //Todo: check classes formControl
+      
+      <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="select-multiple-chip">Chip</InputLabel>
+        <Select
+          multiple
+          value={this.state.categories}
+          onChange={this.handleMultiSelectCat}
+          input={<Input id="select-multiple-chip" />}
+          renderValue={selected => (
+            <div className={classes.chips}>
+              {selected.map(value => (
+                <Chip
+                  key={value}
+                  label={value}
+                  className={classes.chip}
+                />
+              ))}
+            </div>
+          )}
+          MenuProps={MenuProps}
+        >
+          {categories.map((category,index) => (
+            <MenuItem
+              key={category}
+              value={category}
+              style={getStyles(category, this)}
+            >
+              {category}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    )
+  }
+}
+
 class FormArticle extends Component {
   constructor(props) {
     super(props);
@@ -91,7 +179,8 @@ class FormArticle extends Component {
     this.getPhoto = this.getPhoto.bind(this);
     this.handleStock = this.handleStock.bind(this);
     this.removePicture = this.removePicture.bind(this);
-    this.handleMultiSelectCat = this.handleMultiSelectCat.bind(this);
+    this.handleSelCat = this.handleSelCat.bind(this);
+
   }
   componentWillMount() {
     console.log("this.props in formArticle:", this.props);
@@ -117,13 +206,13 @@ class FormArticle extends Component {
     /*   this.setState({
             ListArticles: this.state.ListArticles.concat(this.state.input)
           }); */
-    this.props.articles.onAddArticle(this.state.input);
+    this.props.onAddArticle(this.state.input);
   };
   componentDidUpdate(prevProps) {
     console.log("FormArticle did update");
     // resetForm once props from redux update to get new id in input
     if (prevProps.articles.ListArticles !== this.props.articles.ListArticles) {
-      this._resetForm();
+      this._resetForm();/*?*/
     }
   }
   _resetForm = () => {
@@ -149,7 +238,8 @@ class FormArticle extends Component {
       isPublic: false,
       isEditing: false,
       file: "",
-      imagePreviewURL: ""
+      imagePreviewURL: "",
+      categories:[],
     };
     this.removePicture();
     this.setState({ input: inputReset });
@@ -195,24 +285,17 @@ class FormArticle extends Component {
     deepState.imagePreviewURL = "";
     this.setState({ input: deepState });
   };
-  handleMultiSelectCat = e => {
-    // console.log("handleMultiSelectCat:",e.target.options)
-    let options = e.target.options;
-    let selectedValue = [];
-    // HTMLOptionsCollection is not an array and don't have any foreach method
-    Array.prototype.forEach.call(options, option => {
-      if (option.selected) {
-        selectedValue.push(option.value);
-      }
-    }); /*?.*/
-    let deepStateInputCat = { ...this.state.input };
-    deepStateInputCat.categories = selectedValue;
-    this.setState({ input: deepStateInputCat });
-  }; /*?.*/
+ 
+  handleSelCat=(selectedValue)=>{
+      let deepStateInputCat = { ...this.state.input };
+      deepStateInputCat.categories = selectedValue;
+      this.setState({ input: deepStateInputCat });
+
+  }
   render() {
     console.log("this.props in formArticle:", this.props);
-    const { classes } = this.props;
 
+ 
     var { imagePreviewURL } = this.state.input;
     let imagePreview = null;
     // console.log("this.state.input.imagePreviewURL:",this.state.input.imagePreviewURL);
@@ -280,41 +363,7 @@ class FormArticle extends Component {
                 <label htmlFor="title">Title</label>
               </div>
               <div className="input-field col s3">
-                {
-                  //Todo: check classes formControl
-                }
-                <FormControl className={classes.formControl}>
-                  <InputLabel htmlFor="select-multiple-chip">Chip</InputLabel>
-                  <Select
-                    multiple
-                    value={this.state.input.categories}
-                    onChange={this.handleMultiSelectCat}
-                    input={<Input id="select-multiple-chip" />}
-                    renderValue={selected => (
-                      <div className={classes.chips}>
-                        {selected.map(value => (
-                          <Chip
-                            key={value}
-                            label={value}
-                            className={classes.chip}
-                          />
-                        ))}
-                      </div>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {categories.map(category => (
-                      <MenuItem
-                        key={category}
-                        value={category}
-                        style={getStyles(category, this)}
-                      >
-                        {category}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
+              <MultipleSelect propsFromParent={this.props} selectedValue={this.handleSelCat}></MultipleSelect>
                 {/* <select onChange={this.handleMultiSelectCat} ref="multipleSelectCategories" name="categories[]" multiple>
                     <option value="" disabled defaultValue>
                       Your categories
@@ -457,8 +506,48 @@ class FormArticle extends Component {
     );
   }
   propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+   /*  //Todo: https://github.com/mui-org/material-ui/issues/10845, tried this to fix "Warning: Failed prop type: The prop `value` is marked as required in `SelectInput`, but its value is `undefined`."
+    value: PropTypes.oneOfType([ 
+      PropTypes.string, 
+      PropTypes.number, 
+      PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])), 
+    ]), */
+  };
+  
+}
+const mapStateToProps = state => {
+  return {
+    ListArticles: state.articles.ListArticles,
+    ColumnOrder: state.articles.columnOrder,
+    columns: state.articles.columns["column-1"]
+  };
+};
+//create action add Article
+const addArticle = article => {
+  return {
+    type: "addArticle",
+    id: article.id,
+    title: article.title,
+    description: article.description,
+    isPublic: article.isPublic,
+    isEditing: article.isEditing,
+    categories: article.categories,
+    file: article.file,
+    imagePreviewURL: article.imagePreviewURL
   };
 }
-
-export default withStyles(styles, { withTheme: true })(FormArticle);
+// action on store
+const mapsDispatchToProps = dispatch => {
+  return {
+    onAddArticle: article => {
+      dispatch(
+        addArticle(article)
+        );
+    }
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapsDispatchToProps /*?.*/
+)(withStyles(styles, { withTheme: true })(FormArticle));

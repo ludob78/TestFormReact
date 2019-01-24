@@ -4,11 +4,11 @@ import { connect } from "react-redux";
 import "./App.css";
 // import M from "./js/materialize.min";
 // import M from "materialize-css";
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 import FormArticle from "./formAddArticle";
 // import Fade from '@material-ui/core/Fade';
 import Transition from "react-transition-group/Transition";
@@ -16,39 +16,26 @@ import ListArticles from "./ListArticles.jsx";
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: theme.spacing.unit / 4,
+    flexGrow: 1
   },
   noLabel: {
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit * 3
   },
   textAlign: {
     // padding: theme.spacing.unit * 2,
-    textAlign: 'center',
+    textAlign: "center"
     // color: theme.palette.text.secondary,
   },
-  button:{
-    margin: theme.spacing.unit,
+  button: {
+    margin: theme.spacing.unit
   },
-  modal:{
-    header:{
-      color:"white"
+  modal: {
+    header: {
+      color: "white"
     },
-    background:{
-    },
-    backgroundColor:"#b6efff",
-    margin:"15%",
+    background: {},
+    backgroundColor: "#b6efff",
+    margin: "15%"
   }
 });
 
@@ -67,29 +54,23 @@ const styles = theme => ({
   }
 }; */
 
-
-
-
-
-
-
-const duration=3000;
+const duration = 3000;
 const defaultFadeStyle = {
   transition: `opacity ${duration}ms ease-in-out`,
-  opacity: 0,
-}
+  opacity: 0
+};
 const transitionFadeStyles = {
   entering: { opacity: 0 },
-  entered:  { opacity: 1 },
+  entered: { opacity: 1 }
 };
 class AppArticles extends Component {
   constructor(props) {
     super(props);
-    this.state = { isModalOpen: false };
+    this.state = { isModalOpen: false, resultRequest: "" };
   }
   componentDidMount() {
     // console.log("modals:", modals);
-  /*var modals = document.querySelectorAll(".modal");
+    /*var modals = document.querySelectorAll(".modal");
     let optionsModals = {
     startingTop: "70%",
     dismissible: false,
@@ -102,7 +83,7 @@ class AppArticles extends Component {
   };
   M.Modal.init(modals, optionsModals); */
   }
-    /*   shouldComponentUpdate(nextProps,nextState) {
+  /*   shouldComponentUpdate(nextProps,nextState) {
     console.log("shouldComponentUpdate AppArticles nextProps:", nextProps);
     console.log("shouldComponentUpdate AppArticles this.props:", this.props);
     // console.log("shouldComponentUpdate AppArticles nextState:", nextState);
@@ -110,9 +91,34 @@ class AppArticles extends Component {
     return nextProps.ListArticles !== this.props.ListArticles;
     // return true;
   } */
+  requestBack = () => {
+    console.log("time to request node in container");
+    if(this.state.resultRequest===""){
+      fetch("http://172.18.0.2:3001",{
+        // mode: 'no-cors',
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      },)
+        .then(res => {
+          // console.log("res:", res.json());
+        return res.clone().json();
+        })
+        .then(result => {
+          console.log("result:", result);
+          this.setState({ resultRequest: result.result });
+        }).catch(e=>{
+          console.log("erreur get:",e)
+        });
+    }else{
+      this.setState({ resultRequest: "" });
+    }
+  };
   render() {
     const { classes } = this.props;
-    return <Grid className={classes.root}>
+    return (
+      <Grid className={classes.root}>
         <Grid container alignItems="center" justify="space-around" spacing={24}>
           {/* <Grid className="App container"> */}
           <Grid className={classes.textAlign} item xs={12}>
@@ -120,46 +126,81 @@ class AppArticles extends Component {
           </Grid>
 
           <Transition in={this.state.isModalOpen} timeout={duration}>
-            {state => <div style={{ ...defaultFadeStyle, ...transitionFadeStyles[state] }}>
+            {state => (
+              <div
+                style={{ ...defaultFadeStyle, ...transitionFadeStyles[state] }}
+              >
                 <Modal className={classes.modal} open={this.state.isModalOpen}>
-                  <Grid container direction="column" alignItems="center" justify="center" className={["", classes.textAlign].join(" ")}>
+                  <Grid
+                    container
+                    direction="column"
+                    alignItems="center"
+                    justify="center"
+                    className={["", classes.textAlign].join(" ")}
+                  >
                     {/* <Transition in={this.state.isModalOpen} timeout={500} /> */}
-                    <h1
-                      className={[classes.modal.header, "white"].join(" ")}
-                    >
+                    <h1 className={[classes.modal.header, "white"].join(" ")}>
                       Add article
                     </h1>
-                     {/* send props from parent connected to store */}
+                    {/* send props from parent connected to store */}
                     <FormArticle articles={this.props} />
-                    <Grid item xs={6} lg={12} style={{ backgroundColor: "black" }}>
-                      <Button variant="contained" size="small" fullWidth={false} className={classes.button} color="secondary" onClick={() => {
+                    <Grid
+                      item
+                      xs={6}
+                      lg={12}
+                      style={{ backgroundColor: "black" }}
+                    >
+                      <Button
+                        variant="contained"
+                        size="small"
+                        fullWidth={false}
+                        className={classes.button}
+                        color="secondary"
+                        onClick={() => {
                           this.setState({ isModalOpen: false });
-                        }}>
+                        }}
+                      >
                         Close
                       </Button>
                     </Grid>
                   </Grid>
                 </Modal>
-              </div>}
+              </div>
+            )}
           </Transition>
           <Grid item xs={12} className={classes.textAlign}>
-            <button className="waves-effect waves-light btn" onClick={() => {
+            <button
+              className="waves-effect waves-light btn"
+              onClick={() => {
                 this.setState({ isModalOpen: true });
-              }}>
+              }}
+            >
               <i className="large material-icons">add</i>
             </button>
+            <button
+              className="waves-effect waves-light btn text-primary"
+              onClick={() => {
+                this.requestBack();
+              }}
+            >
+              Request Node
+            </button>
+            <Grid item xs={12}>
+              {this.state.resultRequest}
+            </Grid>
           </Grid>
           <Grid item xs={12} lg={10}>
             <ListArticles onDeleteArticle={this._handleDelete} />
           </Grid>
         </Grid>
-      </Grid>;
+      </Grid>
+    );
   }
 }
 // Define mandatory props to component
-AppArticles.propTypes={
-  classes:PropTypes.object.isRequired,
-}
+AppArticles.propTypes = {
+  classes: PropTypes.object.isRequired
+};
 
 const mapStateToProps = state => {
   return {
@@ -168,33 +209,8 @@ const mapStateToProps = state => {
     columns: state.articles.columns["column-1"]
   };
 };
-//create action add Article
-const addArticle = article => {
-  return {
-    type: "addArticle",
-    id: article.id,
-    title: article.title,
-    description: article.description,
-    isPublic: article.isPublic,
-    isEditing: article.isEditing,
-    categories: article.categories,
-    file: article.file,
-    imagePreviewURL: article.imagePreviewURL
-  };
-};
-// action on store
-const mapsDispatchToProps = dispatch => {
-  return {
-    // onEndDragToRedux:bindActionCreators(reOrder,dispatch),
-    /*?*/
-    onAddArticle: article => {
-      dispatch(
-        addArticle(article)
-        );
-    }
-  };
-};
+
 export default connect(
-  mapStateToProps,
-  mapsDispatchToProps /*?.*/
+  mapStateToProps /*?.*/,
+  null
 )(withStyles(styles, { withTheme: true })(AppArticles));

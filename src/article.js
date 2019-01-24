@@ -102,7 +102,18 @@ class Article extends Component {
                   <div className="row">
                     <div className="col s12">
                       <h6 className="col s4">
-                        {this.props.article.categories}
+                        {
+                          this.props.article.categories.map((category,index)=>{
+
+                            return (<div className="col s12">
+                              {category}
+                              </div>)
+
+                          })
+                            
+                            
+
+                        }
                       </h6>
                       <h5
                         className="col s4  center-align white z-depth-1"
